@@ -14,13 +14,10 @@ nuget:
   project_feed: true
 build:
   project: GodSharp.Data.Dapper.sln
-  publish_nuget: false
-  include_nuget_references: false
+  publish_nuget: true
+  include_nuget_references: true
   verbosity: minimal
 test: off
-artifacts:
-- path: '**\*.nupkg'
-  name: nuget
 deploy:
 - provider: NuGet
   server: https://www.nuget.org/api/v2/package
