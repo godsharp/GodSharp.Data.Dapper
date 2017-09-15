@@ -3,9 +3,7 @@ branches:
   only:
   - master
 skip_branch_with_pr: true
-image:
-- Visual Studio 2017
-- Visual Studio 2015
+image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
 clone_folder: c:\projects\GodSharp.Data.Dapper
@@ -16,10 +14,13 @@ nuget:
   project_feed: true
 build:
   project: GodSharp.Data.Dapper.sln
-  publish_nuget: true
+  publish_nuget: false
   include_nuget_references: true
   verbosity: minimal
 test: off
+artifacts:
+- path: '**\*.nupkg'
+  name: nuget
 deploy:
 - provider: NuGet
   server: https://www.nuget.org/api/v2/package

@@ -9,7 +9,7 @@
     <PackageId>GodSharp.Data.Dapper</PackageId>
     <PackageTags>Dapper,GodSharp.Data.Dapper,GodSharp</PackageTags>
     <Company>GodSharp</Company>
-    <Authors>seayxu</Authors>
+    <Authors>Seay</Authors>
     <Description>DbContext for Dapper.</Description>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/godsharp/GodSharp.Data.Dapper.git</RepositoryUrl>
@@ -23,6 +23,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">netstandard2.0;netstandard1.3;net35;net40;net45;net451;</TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net35'">
     <DefineConstants>NFX;NET35;WF;$(AdditionalConstants)</DefineConstants>
@@ -45,15 +46,6 @@
   <PropertyGroup>
     <OutputPath>..\..\output\</OutputPath>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
-    <PackageReference Include="Dapper" Version="1.42.0" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net40' OR  '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net451'">
     <PackageReference Include="Dapper" Version="1.50.0" />
     <Reference Include="Microsoft.CSharp" />
@@ -71,5 +63,14 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Dapper" Version="1.50.4-alpha1-00070" />
     <PackageReference Include="GodSharp.Data.Common.DbProvider" Version="1.0.0-preview1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
+    <PackageReference Include="Dapper" Version="1.42.0" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
 </Project>
