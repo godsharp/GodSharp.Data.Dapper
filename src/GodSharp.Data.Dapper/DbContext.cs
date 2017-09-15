@@ -155,7 +155,7 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <param name="command">The command to execute on this connection.</param>
         /// <returns>The number of rows affected.</returns>
-        public int Execute(CommandDefinition command)
+        protected int Execute(CommandDefinition command)
         {
             try
             {
@@ -180,7 +180,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>The number of rows affected.</returns>
-        public int Execute(string sql, object param = null, int? commandTimeout = default(int?),
+        protected int Execute(string sql, object param = null, int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
         {
             try
@@ -209,7 +209,7 @@ namespace GodSharp.Data.Dapper
         /// This is typically used when the results of a query are not processed by Dapper, for example, used to fill a <see cref="DataTable"/>
         /// or <see cref="T:DataSet"/>.
         /// </remarks>
-        public IDataReader ExecuteReader(CommandDefinition command)
+        protected IDataReader ExecuteReader(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -226,7 +226,7 @@ namespace GodSharp.Data.Dapper
         /// This is typically used when the results of a query are not processed by Dapper, for example, used to fill a <see cref="DataTable"/>
         /// or <see cref="T:DataSet"/>.
         /// </remarks>
-        public IDataReader ExecuteReader(CommandDefinition command, CommandBehavior commandBehavior)
+        protected IDataReader ExecuteReader(CommandDefinition command, CommandBehavior commandBehavior)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -256,7 +256,7 @@ namespace GodSharp.Data.Dapper
         /// ]]>
         /// </code>
         /// </example>
-        public IDataReader ExecuteReader(string sql, object param = null, int? commandTimeout = default(int?),
+        protected IDataReader ExecuteReader(string sql, object param = null, int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
         {
             return _dbConnection.ExecuteReader(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -271,7 +271,7 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <param name="command">The command to execute.</param>
         /// <returns>The first cell selected as <see cref="object"/>.</returns>
-        public object ExecuteScalar(CommandDefinition command)
+        protected object ExecuteScalar(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -286,7 +286,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>The first cell selected as <see cref="object"/>.</returns>
-        public object ExecuteScalar(string sql, object param = null, int? commandTimeout = default(int?),
+        protected object ExecuteScalar(string sql, object param = null, int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
         {
             return _dbConnection.ExecuteScalar(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -298,7 +298,7 @@ namespace GodSharp.Data.Dapper
         /// <typeparam name="T">The type to return.</typeparam>
         /// <param name="command">The command to execute.</param>
         /// <returns>The first cell selected as <typeparamref name="T"/>.</returns>
-        public T ExecuteScalar<T>(CommandDefinition command)
+        protected T ExecuteScalar<T>(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -314,7 +314,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>The first cell returned, as <typeparamref name="T"/>.</returns>
-        public T ExecuteScalar<T>(string sql, object param = null, int? commandTimeout = default(int?),
+        protected T ExecuteScalar<T>(string sql, object param = null, int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
         {
             return _dbConnection.ExecuteScalar<T>(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -333,7 +333,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of <typeparamref name="TReturn"/>; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public IEnumerable<TReturn> Query<TReturn>(CommandDefinition command)
+        protected IEnumerable<TReturn> Query<TReturn>(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -350,7 +350,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: each row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public IEnumerable<dynamic> Query(string sql, object param = null, bool buffered = true,
+        protected IEnumerable<dynamic> Query(string sql, object param = null, bool buffered = true,
             int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?))
         {
             return _dbConnection.Query(sql, param, _dbTransaction, buffered, commandTimeout, commandType);
@@ -371,7 +371,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public IEnumerable<object> Query(Type type, string sql, object param = null, bool buffered = true,
+        protected IEnumerable<object> Query(Type type, string sql, object param = null, bool buffered = true,
             int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?))
         {
             return _dbConnection.Query(type, sql, param, _dbTransaction, buffered, commandTimeout, commandType);
@@ -390,7 +390,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public IEnumerable<T> Query<T>(string sql, object param = null, bool buffered = true,
+        protected IEnumerable<T> Query<T>(string sql, object param = null, bool buffered = true,
             int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?))
         {
             return _dbConnection.Query<T>(sql, param, _dbTransaction, buffered, commandTimeout, commandType);
@@ -411,7 +411,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
-        public IEnumerable<TReturn> Query<TReturn>(string sql, Type[] types, Func<object[], TReturn> map,
+        protected IEnumerable<TReturn> Query<TReturn>(string sql, Type[] types, Func<object[], TReturn> map,
             object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
         {
@@ -435,7 +435,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
-        public IEnumerable<TReturn> Query<TFirst, TSecond, TReturn>(string sql, Func<TFirst, TSecond, TReturn> map,
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TReturn>(string sql, Func<TFirst, TSecond, TReturn> map,
             object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
         {
@@ -458,7 +458,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
-        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TReturn>(string sql,
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TReturn>(string sql,
             Func<TFirst, TSecond, TThird, TReturn> map, object param = null, bool buffered = true,
             string splitOn = "Id", int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
@@ -483,7 +483,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
-        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TReturn>(string sql,
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TReturn>(string sql,
             Func<TFirst, TSecond, TThird, TFourth, TReturn> map, object param = null, bool buffered = true,
             string splitOn = "Id", int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
@@ -510,7 +510,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
-        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(string sql,
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(string sql,
             Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, object param = null, bool buffered = true,
             string splitOn = "Id", int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
@@ -537,7 +537,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
-        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn>(string sql,
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn>(string sql,
             Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn> map, object param = null,
             bool buffered = true, string splitOn = "Id", int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
@@ -565,7 +565,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
-        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(
+        protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(
             string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn> map,
             object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = default(int?),
             CommandType? commandType = default(CommandType?))
@@ -583,7 +583,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
         /// <returns>A <see cref="DataTable"/>.</returns>
-        public DataTable Query(string sql, object param = null, int? commandTimeout =
+        protected DataTable Query(string sql, object param = null, int? commandTimeout =
             null, CommandType? commandType = default(CommandType?))
         {
             return _dbConnection.Query(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -603,7 +603,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public dynamic QueryFirst(string sql, object param = null, int? commandTimeout = null,
+        protected dynamic QueryFirst(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
             return _dbConnection.QueryFirst(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -622,7 +622,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public T QueryFirst<T>(string sql, object param = null, int? commandTimeout = null,
+        protected T QueryFirst<T>(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
 #if NET35
@@ -645,7 +645,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public object QueryFirst(Type type, string sql, object param = null, int? commandTimeout = null,
+        protected object QueryFirst(Type type, string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
 #if NET35
@@ -664,7 +664,7 @@ namespace GodSharp.Data.Dapper
         /// A single instance or null of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public T QueryFirst<T>(CommandDefinition command)
+        protected T QueryFirst<T>(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -688,7 +688,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public dynamic QueryFirstOrDefault(string sql, object param = null, int? commandTimeout = null,
+        protected dynamic QueryFirstOrDefault(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
             return _dbConnection.QueryFirstOrDefault(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -707,7 +707,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public T QueryFirstOrDefault<T>(string sql, object param = null, int? commandTimeout = null,
+        protected T QueryFirstOrDefault<T>(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
 #if NET35
@@ -731,7 +731,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public object QueryFirstOrDefault(Type type, string sql, object param = null, int? commandTimeout = null,
+        protected object QueryFirstOrDefault(Type type, string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
 #if NET35
@@ -751,7 +751,7 @@ namespace GodSharp.Data.Dapper
         /// A single or null instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public T QueryFirstOrDefault<T>(CommandDefinition command)
+        protected T QueryFirstOrDefault<T>(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -773,7 +773,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to use for this query.</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
-        public SqlMapper.GridReader QueryMultiple(string sql, object param = null, int? commandTimeout = null,
+        protected SqlMapper.GridReader QueryMultiple(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
             return _dbConnection.QueryMultiple(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -783,7 +783,7 @@ namespace GodSharp.Data.Dapper
         /// Execute a command that returns multiple result sets, and access each in turn.
         /// </summary>
         /// <param name="command">The command used to query on this connection.</param>
-        public SqlMapper.GridReader QueryMultiple(CommandDefinition command)
+        protected SqlMapper.GridReader QueryMultiple(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -803,7 +803,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public dynamic QuerySingle(string sql, object param = null, int? commandTimeout = null,
+        protected dynamic QuerySingle(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
             return _dbConnection.QuerySingle(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -822,7 +822,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public T QuerySingle<T>(string sql, object param = null, int? commandTimeout = null,
+        protected T QuerySingle<T>(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
 #if NET35
@@ -845,7 +845,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public object QuerySingle(Type type, string sql, object param = null, int? commandTimeout = null,
+        protected object QuerySingle(Type type, string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
 #if NET35
@@ -864,7 +864,7 @@ namespace GodSharp.Data.Dapper
         /// A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public T QuerySingle<T>(CommandDefinition command)
+        protected T QuerySingle<T>(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
@@ -888,7 +888,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
-        public dynamic QuerySingleOrDefault(string sql, object param = null, int? commandTimeout = null,
+        protected dynamic QuerySingleOrDefault(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
             return _dbConnection.QuerySingleOrDefault(sql, param, _dbTransaction, commandTimeout, commandType);
@@ -907,7 +907,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public T QuerySingleOrDefault<T>(string sql, object param = null, int? commandTimeout = null,
+        protected T QuerySingleOrDefault<T>(string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
 #if NET35
@@ -931,7 +931,7 @@ namespace GodSharp.Data.Dapper
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public object QuerySingleOrDefault(Type type, string sql, object param = null, int? commandTimeout = null,
+        protected object QuerySingleOrDefault(Type type, string sql, object param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
 #if NET35
@@ -951,7 +951,7 @@ namespace GodSharp.Data.Dapper
         /// A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        public T QuerySingleOrDefault<T>(CommandDefinition command)
+        protected T QuerySingleOrDefault<T>(CommandDefinition command)
         {
             command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);

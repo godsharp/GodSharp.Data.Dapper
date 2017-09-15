@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <AssemblyFileVersion>1.0.0.0</AssemblyFileVersion>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.2</AssemblyFileVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -17,9 +17,8 @@
     <Copyright>Copyright © GodSharp 2017</Copyright>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/26563296</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/godsharp/GodSharp.Data.Dapper/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>1.0.0-preview1</Version>
+    <Version>1.0.0-preview2</Version>
     <EnableDefaultItems>true</EnableDefaultItems>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">netstandard1.3;net35;net40;net45;net451;</TargetFrameworks>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
   </PropertyGroup>
