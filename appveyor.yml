@@ -19,7 +19,8 @@ build:
   verbosity: minimal
 test: off
 artifacts:
-- path: /.*\.nupkg/
+- path: '**\*.nupkg'
+  name: nuget
 deploy:
 - provider: NuGet
   server: https://www.nuget.org/api/v2/package
