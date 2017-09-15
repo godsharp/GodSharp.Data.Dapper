@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.15
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{88A87CD9-82FA-4EE9-8F29-886163298E32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GodSharp.Data.Dapper", "src\GodSharp.Data.Dapper\GodSharp.Data.Dapper.csproj", "{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E} = {88A87CD9-82FA-4EE9-8F29-886163298E32}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FBDB1F4C-F82C-460D-9227-282EAD7EE8A0}
+	EndGlobalSection
+EndGlobal
