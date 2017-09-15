@@ -17,7 +17,7 @@
     <Copyright>Copyright © GodSharp 2017</Copyright>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/26563296</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/godsharp/GodSharp.Data.Dapper/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>1.0.0-preview2</Version>
+    <Version>1.0.0-preview1</Version>
     <EnableDefaultItems>true</EnableDefaultItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">netstandard1.3;net35;net40;net45;net451;</TargetFrameworks>
@@ -39,8 +39,8 @@
     <DefineConstants>CFX;NETSTANDARD1_3;$(AdditionalConstants)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
-    <OutputPath>..\..\output\$(Configuration)</OutputPath>
-    <DocumentationFile>..\..\output\$(Configuration)\$(TargetFramework)\GodSharp.Data.Dapper.xml</DocumentationFile>
+    <OutputPath>..\..\output\</OutputPath>
+    <DocumentationFile>..\..\output\$(TargetFramework)\GodSharp.Data.Dapper.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net35' OR  '$(TargetFramework)' == 'net40' OR  '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net451'">
     <Reference Include="System" />

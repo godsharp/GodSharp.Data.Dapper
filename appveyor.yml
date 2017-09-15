@@ -14,10 +14,12 @@ nuget:
   project_feed: true
 build:
   project: GodSharp.Data.Dapper.sln
-  publish_nuget: true
-  include_nuget_references: true
+  publish_nuget: false
+  include_nuget_references: false
   verbosity: minimal
 test: off
+artifacts:
+- path: /.*\.nupkg/
 deploy:
 - provider: NuGet
   server: https://www.nuget.org/api/v2/package
@@ -40,7 +42,7 @@ deploy:
 - provider: GitHub
   auth_token:
     secure: uCHTzET52dtiexqTKhgQmup+EBGZs1Afw6eBMfvN4PbQ720YaybNd890Y96ISZ0T
-  artifact: /.*\.(?:nupkg)/
+  artifact: /.*\.nupkg/
   draft: true
   force_update: true
   on:
