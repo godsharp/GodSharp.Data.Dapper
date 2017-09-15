@@ -1,9 +1,9 @@
-﻿using Dapper;
+﻿#if WF
+using Dapper;
 using System.Data;
 
 namespace GodSharp.Data.Dapper.Extension
 {
-#if WF
     /// <summary>
     /// IDbConnection Extension
     /// </summary>
@@ -55,5 +55,5 @@ namespace GodSharp.Data.Dapper.Extension
             return dt;
         }
     }
-#endif
 }
+#endif

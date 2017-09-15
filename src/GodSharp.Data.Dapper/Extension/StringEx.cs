@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#if NET35
+using System.Linq;
 
 namespace GodSharp.Data.Dapper.Extension
 {
@@ -7,7 +8,6 @@ namespace GodSharp.Data.Dapper.Extension
     /// </summary>
     public class StringEx
     {
-#if NET35
         internal static bool IsNullOrWhiteSpace(string value)
         {
             if (value == null)
@@ -17,6 +17,6 @@ namespace GodSharp.Data.Dapper.Extension
 
             return value.All(char.IsWhiteSpace);
         } 
-#endif
     }
 }
+#endif

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 #if NFX
 using System.Configuration; 
 #endif
@@ -6,12 +7,12 @@ using System.Data;
 using System.Data.Common;
 #if CFX
 using GodSharp.Data.Common.DbProvider;
-// ReSharper disable SuggestVarOrType_BuiltInTypes
 #endif
 #if NET35
 using GodSharp.Data.Dapper.Extension;
 #endif
 
+// ReSharper disable SuggestVarOrType_BuiltInTypes
 namespace GodSharp.Data.Dapper
 {
     /// <summary>
@@ -25,6 +26,7 @@ namespace GodSharp.Data.Dapper
         /// <value>
         /// The database provider factory.
         /// </value>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
         public DbProviderFactory DbProviderFactory { get; private set; }
 
         /// <summary>
@@ -53,24 +55,37 @@ namespace GodSharp.Data.Dapper
         /// <summary>
         /// Initializes a new instance of the <see cref="DbConnectionFactory"/> class.
         /// </summary>
-        /// <param name="connectionStringName">Name of the connection string name.</param>
-        /// <exception cref="ConfigurationErrorsException">
-        /// ConnectionString 'ProviderName' is not valid.
-        /// </exception>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        /// <exception cref="ArgumentNullException">connectionStringName is null.</exception>
+        /// <exception cref="KeyNotFoundException">connectionStringName not found in ConnectionStrings.</exception>
         public DbConnectionFactory(string connectionStringName)
         {
-#if NFX
-            ConnectionStringSettings setting = ConfigurationManager.ConnectionStrings[connectionStringName];
-
 #if NET35
-            if (StringEx.IsNullOrWhiteSpace(setting.ProviderName))
+            if (StringEx.IsNullOrWhiteSpace(connectionStringName))
 #else
-            if (string.IsNullOrWhiteSpace(setting.ProviderName))
+            if (string.IsNullOrWhiteSpace(connectionStringName))
 #endif
             {
-                throw new ConfigurationErrorsException("ConnectionString 'ProviderName' is not valid.");
+                throw new ArgumentNullException(nameof(connectionStringName));
+            }
+#if NFX
+            ConnectionStringSettings setting = ConfigurationManager.ConnectionStrings[connectionStringName];
+            
+            if (setting==null)
+            {
+                throw new KeyNotFoundException("connectionStringName not found in ConnectionStrings");
             }
 
+            Use(setting.ProviderName, setting.ConnectionString); 
+#endif
+#if CFX
+            if (!DbConnectionStringManager.Keys.Contains(connectionStringName))
+            {
+                throw new KeyNotFoundException("connectionStringName not found in ConnectionStrings");
+            }
+            
+            DbConnectionStringSetting setting = DbConnectionStringManager.ConnectionStrings[connectionStringName];
+            
             Use(setting.ProviderName, setting.ConnectionString); 
 #endif
         }
@@ -146,8 +161,8 @@ namespace GodSharp.Data.Dapper
                 }
             }
 
-            this.ConnectionString = conn;
-            this.ProviderName = providerName;
+            ConnectionString = conn;
+            ProviderName = providerName;
 #if NFX
             this.DbProviderFactory = DbProviderFactories.GetFactory(this.ProviderName);
 #elif CFX
@@ -161,7 +176,13 @@ namespace GodSharp.Data.Dapper
         /// <returns>The <see cref="IDbConnection"/>.</returns>
         public T New<T>() where T : DbConnection
         {
-            IDbConnection conn = this.DbProviderFactory.CreateConnection();
+            IDbConnection conn = DbProviderFactory.CreateConnection();
+            
+            if (conn==null)
+            {
+                return null;
+            }
+            
             conn.ConnectionString = ConnectionString;
 
             return conn as T;
@@ -173,7 +194,13 @@ namespace GodSharp.Data.Dapper
         /// <returns></returns>
         public IDbConnection New()
         {
-            IDbConnection conn = this.DbProviderFactory.CreateConnection();
+            IDbConnection conn = DbProviderFactory.CreateConnection();
+
+            if (conn==null)
+            {
+                return null;
+            }
+            
             conn.ConnectionString = ConnectionString;
 
             return conn;
