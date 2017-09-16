@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyVersion>1.0.0.3</AssemblyVersion>
-    <AssemblyFileVersion>1.0.0.3</AssemblyFileVersion>
+    <AssemblyVersion>1.0.0.4</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.4</AssemblyFileVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -17,7 +17,7 @@
     <Copyright>Copyright © GodSharp 2017</Copyright>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/26563296</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/godsharp/GodSharp.Data.Dapper/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>1.0.0-preview3</Version>
+    <Version>1.0.0-preview4</Version>
     <EnableDefaultItems>true</EnableDefaultItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -52,8 +52,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net40' OR  '$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net451'">
     <PackageReference Include="Dapper" Version="1.50.0" />
@@ -61,8 +59,6 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="Dapper" Version="1.50.0" />

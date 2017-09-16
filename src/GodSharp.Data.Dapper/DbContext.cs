@@ -100,6 +100,8 @@ namespace GodSharp.Data.Dapper
         {
             if (_dbTransaction == null)
             {
+				Open();
+
                 _dbTransaction =
                     il == null ? _dbConnection.BeginTransaction() : _dbConnection.BeginTransaction(il.Value);
                 _affectedRowNumber = 0;
@@ -107,15 +109,14 @@ namespace GodSharp.Data.Dapper
         }
 
         /// <summary>
-        /// Commits the specified rollback.
+        /// Commits transaction.
         /// </summary>
-        /// <param name="rollback">if set to <c>true</c> [rollback].</param>
         /// <returns></returns>
-        public int Commit(bool rollback = false)
+        public int Commit()
         {
             if (_dbTransaction != null)
             {
-                if (_hasError || rollback)
+                if (_hasError)
                 {
                     _dbTransaction.Rollback();
                 }
@@ -123,15 +124,45 @@ namespace GodSharp.Data.Dapper
                 {
                     _dbTransaction.Commit();
                 }
-
-                _hasError = false;
-                _dbTransaction = null;
             }
 
             int number = _affectedRowNumber;
-            _affectedRowNumber = 0;
+            Reset();
 
             return number;
+        }
+        
+        /// <summary>
+        /// Callback transaction.
+        /// </summary>
+		public void Callback()
+        {
+            if (_dbTransaction != null)
+            {
+				_dbTransaction?.Rollback();
+				
+				Reset();
+            }
+        }
+
+
+        /// <summary>
+        /// Opens the connection.
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        protected void Open()
+        {
+            if (_dbConnection.State == ConnectionState.Closed)
+            {
+                try
+                {
+                    _dbConnection.Open();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message, ex);
+                }
+            }
         }
 
         /// <summary>
