@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyVersion>1.0.0.4</AssemblyVersion>
-    <AssemblyFileVersion>1.0.0.4</AssemblyFileVersion>
+    <AssemblyVersion>1.0.0.5</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.5</AssemblyFileVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Title>GodSharp.Data.Dapper</Title>
     <PackageId>GodSharp.Data.Dapper</PackageId>
     <PackageTags>Dapper,GodSharp.Data.Dapper,GodSharp</PackageTags>
+    <PackageReleaseNotes>Add 'withoutTranTransaction' signature decide whether to use a transaction.</PackageReleaseNotes>
     <Company>GodSharp</Company>
     <Authors>seayxu</Authors>
     <Description>DbContext for Dapper.</Description>
@@ -17,7 +18,7 @@
     <Copyright>Copyright © GodSharp 2017</Copyright>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/26563296</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/godsharp/GodSharp.Data.Dapper/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>1.0.0-preview4</Version>
+    <Version>1.0.0-preview5</Version>
     <EnableDefaultItems>true</EnableDefaultItems>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

@@ -11,13 +11,14 @@ DbContext for Dapper.
 # Getting Started
 
 1. Install Nuget Package.
+
   See [here](https://www.nuget.org/packages/GodSharp.Data.Dapper/).
 
 2. Inherited class `DbContext`.
 
- Use connectionString name in `App.Config` or `Web.config` as constructor parameters.
+  Use connectionString name in `App.Config` or `Web.config` as constructor parameters.
 
- If your project type is `.NET Core`,you should add json setting for `connectionStrings` and `DbConnectionFactories`,format reference [here](https://github.com/godsharp/GodSharp.Data.Common.DbProvider#getting-started).
+  If your project type is `.NET Core`,you should add json setting for `connectionStrings` and `DbConnectionFactories`,format reference [here](https://github.com/godsharp/GodSharp.Data.Common.DbProvider#getting-started).
 
 ```
 public class IRepository:DbContext
@@ -105,4 +106,4 @@ public class TestRepository : IRepository
 
 # License
 
-licensed under the MIT License.
+  Licensed under the MIT License.

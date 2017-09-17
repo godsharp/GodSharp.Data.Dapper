@@ -73,7 +73,7 @@ namespace GodSharp.Data.Dapper
         /// Initializes a new instance of the <see cref="DbContext"/> class.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string key.</param>
-        public DbContext(string connectionStringName)
+        protected DbContext(string connectionStringName)
         {
             _factory = new DbConnectionFactory(connectionStringName);
 
@@ -96,7 +96,7 @@ namespace GodSharp.Data.Dapper
         /// Begins the transaction.
         /// </summary>
         /// <param name="il">The il.</param>
-        public void BeginTransaction(IsolationLevel? il = null)
+        protected void BeginTransaction(IsolationLevel? il = null)
         {
             if (_dbTransaction == null)
             {
@@ -112,7 +112,7 @@ namespace GodSharp.Data.Dapper
         /// Commits transaction.
         /// </summary>
         /// <returns></returns>
-        public int Commit()
+        protected int Commit()
         {
             if (_dbTransaction != null)
             {
@@ -135,7 +135,7 @@ namespace GodSharp.Data.Dapper
         /// <summary>
         /// Callback transaction.
         /// </summary>
-		public void Callback()
+        protected void Callback()
         {
             if (_dbTransaction != null)
             {
@@ -185,12 +185,13 @@ namespace GodSharp.Data.Dapper
         /// Execute parameterized SQL.
         /// </summary>
         /// <param name="command">The command to execute on this connection.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>The number of rows affected.</returns>
-        protected int Execute(CommandDefinition command)
+        protected int Execute(CommandDefinition command,bool withoutTranTransaction=false)
         {
             try
             {
-                command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+                command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                     command.CommandTimeout, command.CommandType, command.Flags);
                 int rows = _dbConnection.Execute(command);
                 _affectedRowNumber += rows;
@@ -210,13 +211,14 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to use for this query.</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>The number of rows affected.</returns>
         protected int Execute(string sql, object param = null, int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
             try
             {
-                int rows = _dbConnection.Execute(sql, param, _dbTransaction, commandTimeout, commandType);
+                int rows = _dbConnection.Execute(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
                 _affectedRowNumber += rows;
                 return rows;
             }
@@ -235,14 +237,15 @@ namespace GodSharp.Data.Dapper
         /// Execute parameterized SQL and return an <see cref="IDataReader"/>.
         /// </summary>
         /// <param name="command">The command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An <see cref="IDataReader"/> that can be used to iterate over the results of the SQL query.</returns>
         /// <remarks>
         /// This is typically used when the results of a query are not processed by Dapper, for example, used to fill a <see cref="DataTable"/>
         /// or <see cref="T:DataSet"/>.
         /// </remarks>
-        protected IDataReader ExecuteReader(CommandDefinition command)
+        protected IDataReader ExecuteReader(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
             return _dbConnection.ExecuteReader(command);
         }
@@ -252,14 +255,15 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <param name="command">The command to execute.</param>
         /// <param name="commandBehavior">The <see cref="CommandBehavior"/> flags for this reader.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An <see cref="IDataReader"/> that can be used to iterate over the results of the SQL query.</returns>
         /// <remarks>
         /// This is typically used when the results of a query are not processed by Dapper, for example, used to fill a <see cref="DataTable"/>
         /// or <see cref="T:DataSet"/>.
         /// </remarks>
-        protected IDataReader ExecuteReader(CommandDefinition command, CommandBehavior commandBehavior)
+        protected IDataReader ExecuteReader(CommandDefinition command, CommandBehavior commandBehavior,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
             return _dbConnection.ExecuteReader(command, commandBehavior);
         }
@@ -271,6 +275,7 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to use for this command.</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An <see cref="IDataReader"/> that can be used to iterate over the results of the SQL query.</returns>
         /// <remarks>
         /// This is typically used when the results of a query are not processed by Dapper, for example, used to fill a <see cref="DataTable"/>
@@ -288,9 +293,9 @@ namespace GodSharp.Data.Dapper
         /// </code>
         /// </example>
         protected IDataReader ExecuteReader(string sql, object param = null, int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.ExecuteReader(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.ExecuteReader(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 
         #endregion
@@ -301,10 +306,11 @@ namespace GodSharp.Data.Dapper
         /// Execute parameterized SQL that selects a single value.
         /// </summary>
         /// <param name="command">The command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>The first cell selected as <see cref="object"/>.</returns>
-        protected object ExecuteScalar(CommandDefinition command)
+        protected object ExecuteScalar(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
             return _dbConnection.ExecuteScalar(command);
         }
@@ -316,11 +322,12 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to use for this command.</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>The first cell selected as <see cref="object"/>.</returns>
         protected object ExecuteScalar(string sql, object param = null, int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.ExecuteScalar(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.ExecuteScalar(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 
         /// <summary>
@@ -328,10 +335,11 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <typeparam name="T">The type to return.</typeparam>
         /// <param name="command">The command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>The first cell selected as <typeparamref name="T"/>.</returns>
-        protected T ExecuteScalar<T>(CommandDefinition command)
+        protected T ExecuteScalar<T>(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
             return _dbConnection.ExecuteScalar<T>(command);
         }
@@ -344,11 +352,12 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to use for this command.</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>The first cell returned, as <typeparamref name="T"/>.</returns>
         protected T ExecuteScalar<T>(string sql, object param = null, int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.ExecuteScalar<T>(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.ExecuteScalar<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 
         #endregion
@@ -360,13 +369,14 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <typeparam name="TReturn">The type of results to return.</typeparam>
         /// <param name="command">The command used to query on this connection.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A sequence of data of <typeparamref name="TReturn"/>; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        protected IEnumerable<TReturn> Query<TReturn>(CommandDefinition command)
+        protected IEnumerable<TReturn> Query<TReturn>(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
             return _dbConnection.Query<TReturn>(command);
         }
@@ -380,11 +390,12 @@ namespace GodSharp.Data.Dapper
         /// <param name="buffered">Whether to buffer the results in memory.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <remarks>Note: each row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
         protected IEnumerable<dynamic> Query(string sql, object param = null, bool buffered = true,
-            int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?))
+            int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, param, _dbTransaction, buffered, commandTimeout, commandType);
+            return _dbConnection.Query(sql, param, withoutTranTransaction ? null : _dbTransaction, buffered, commandTimeout, commandType);
         }
 #endif
 
@@ -397,15 +408,16 @@ namespace GodSharp.Data.Dapper
         /// <param name="buffered">Whether to buffer results in memory.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <exception cref="ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected IEnumerable<object> Query(Type type, string sql, object param = null, bool buffered = true,
-            int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?))
+            int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(type, sql, param, _dbTransaction, buffered, commandTimeout, commandType);
+            return _dbConnection.Query(type, sql, param, withoutTranTransaction ? null : _dbTransaction, buffered, commandTimeout, commandType);
         }
 
         /// <summary>
@@ -417,14 +429,15 @@ namespace GodSharp.Data.Dapper
         /// <param name="buffered">Whether to buffer results in memory.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected IEnumerable<T> Query<T>(string sql, object param = null, bool buffered = true,
-            int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?))
+            int? commandTimeout = default(int?), CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query<T>(sql, param, _dbTransaction, buffered, commandTimeout, commandType);
+            return _dbConnection.Query<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, buffered, commandTimeout, commandType);
         }
 
 #if !NET35 
@@ -441,12 +454,13 @@ namespace GodSharp.Data.Dapper
         /// <param name="splitOn">The field we should split and read the second object from (default: "Id").</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         protected IEnumerable<TReturn> Query<TReturn>(string sql, Type[] types, Func<object[], TReturn> map,
             object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, types, map, param, _dbTransaction, buffered, splitOn, commandTimeout,
+            return _dbConnection.Query(sql, types, map, param, withoutTranTransaction ? null : _dbTransaction, buffered, splitOn, commandTimeout,
                 commandType);
         }
 #endif
@@ -465,12 +479,13 @@ namespace GodSharp.Data.Dapper
         /// <param name="splitOn">The field we should split and read the second object from (default: "Id").</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         protected IEnumerable<TReturn> Query<TFirst, TSecond, TReturn>(string sql, Func<TFirst, TSecond, TReturn> map,
             object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, map, param, _dbTransaction, buffered, splitOn, commandTimeout, commandType);
+            return _dbConnection.Query(sql, map, param, withoutTranTransaction ? null : _dbTransaction, buffered, splitOn, commandTimeout, commandType);
         }
 
         /// <summary>
@@ -488,13 +503,14 @@ namespace GodSharp.Data.Dapper
         /// <param name="splitOn">The field we should split and read the second object from (default: "Id").</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TReturn>(string sql,
             Func<TFirst, TSecond, TThird, TReturn> map, object param = null, bool buffered = true,
             string splitOn = "Id", int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, map, param, _dbTransaction, buffered, splitOn, commandTimeout, commandType);
+            return _dbConnection.Query(sql, map, param, withoutTranTransaction ? null : _dbTransaction, buffered, splitOn, commandTimeout, commandType);
         }
 
         /// <summary>
@@ -513,13 +529,14 @@ namespace GodSharp.Data.Dapper
         /// <param name="splitOn">The field we should split and read the second object from (default: "Id").</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TReturn>(string sql,
             Func<TFirst, TSecond, TThird, TFourth, TReturn> map, object param = null, bool buffered = true,
             string splitOn = "Id", int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, map, param, _dbTransaction, buffered, splitOn, commandTimeout, commandType);
+            return _dbConnection.Query(sql, map, param, withoutTranTransaction ? null : _dbTransaction, buffered, splitOn, commandTimeout, commandType);
         }
 
 #if !NET35
@@ -540,13 +557,14 @@ namespace GodSharp.Data.Dapper
         /// <param name="splitOn">The field we should split and read the second object from (default: "Id").</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(string sql,
             Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, object param = null, bool buffered = true,
             string splitOn = "Id", int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, map, param, _dbTransaction, buffered, splitOn, commandTimeout, commandType);
+            return _dbConnection.Query(sql, map, param, withoutTranTransaction ? null : _dbTransaction, buffered, splitOn, commandTimeout, commandType);
         }
 
         /// <summary>
@@ -567,13 +585,14 @@ namespace GodSharp.Data.Dapper
         /// <param name="splitOn">The field we should split and read the second object from (default: "Id").</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn>(string sql,
             Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn> map, object param = null,
             bool buffered = true, string splitOn = "Id", int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, map, param, _dbTransaction, buffered, splitOn, commandTimeout, commandType);
+            return _dbConnection.Query(sql, map, param, withoutTranTransaction ? null : _dbTransaction, buffered, splitOn, commandTimeout, commandType);
         }
 
         /// <summary>
@@ -595,13 +614,14 @@ namespace GodSharp.Data.Dapper
         /// <param name="splitOn">The field we should split and read the second object from (default: "Id").</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>An enumerable of <typeparamref name="TReturn"/>.</returns>
         protected IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(
             string sql, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn> map,
             object param = null, bool buffered = true, string splitOn = "Id", int? commandTimeout = default(int?),
-            CommandType? commandType = default(CommandType?))
+            CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, map, param, _dbTransaction, buffered, splitOn, commandTimeout, commandType);
+            return _dbConnection.Query(sql, map, param, withoutTranTransaction ? null : _dbTransaction, buffered, splitOn, commandTimeout, commandType);
         }
 #endif
 
@@ -613,11 +633,12 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to use for this query.</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>A <see cref="DataTable"/>.</returns>
         protected DataTable Query(string sql, object param = null, int? commandTimeout =
-            null, CommandType? commandType = default(CommandType?))
+            null, CommandType? commandType = default(CommandType?),bool withoutTranTransaction=false)
         {
-            return _dbConnection.Query(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.Query(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 #endif
 
@@ -633,11 +654,12 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
         protected dynamic QueryFirst(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
-            return _dbConnection.QueryFirst(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QueryFirst(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 #endif
 
@@ -649,17 +671,18 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected T QueryFirst<T>(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
 #if NET35
-            return _dbConnection.Query<T>(sql, param, _dbTransaction, false, commandTimeout, commandType).First();
+            return _dbConnection.Query<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, false, commandTimeout, commandType).First();
 #else
-            return _dbConnection.QueryFirst<T>(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QueryFirst<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
 #endif
         }
 
@@ -671,18 +694,19 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <exception cref="ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected object QueryFirst(Type type, string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
 #if NET35
-            return _dbConnection.Query(type, sql, param, _dbTransaction, false, commandTimeout, commandType).First();
+            return _dbConnection.Query(type, sql, param, withoutTranTransaction ? null : _dbTransaction, false, commandTimeout, commandType).First();
 #else
-            return _dbConnection.QueryFirst(type, sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QueryFirst(type, sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
 #endif
         }
 
@@ -691,13 +715,14 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <typeparam name="T">The type of results to return.</typeparam>
         /// <param name="command">The command used to query on this connection.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A single instance or null of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        protected T QueryFirst<T>(CommandDefinition command)
+        protected T QueryFirst<T>(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
 #if NET35
             return _dbConnection.Query<T>(command).First();
@@ -718,11 +743,12 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
         protected dynamic QueryFirstOrDefault(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
-            return _dbConnection.QueryFirstOrDefault(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QueryFirstOrDefault(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 #endif
 
@@ -734,18 +760,19 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected T QueryFirstOrDefault<T>(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
 #if NET35
-            return _dbConnection.Query<T>(sql, param, _dbTransaction, false, commandTimeout, commandType)
+            return _dbConnection.Query<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, false, commandTimeout, commandType)
                 .FirstOrDefault();
 #else
-            return _dbConnection.QueryFirstOrDefault<T>(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QueryFirstOrDefault<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
 #endif
         }
 
@@ -757,19 +784,20 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <exception cref="ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected object QueryFirstOrDefault(Type type, string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
 #if NET35
-            return _dbConnection.Query(type, sql, param, _dbTransaction, false, commandTimeout, commandType)
+            return _dbConnection.Query(type, sql, param, withoutTranTransaction ? null : _dbTransaction, false, commandTimeout, commandType)
                 .FirstOrDefault();
 #else
-            return _dbConnection.QueryFirstOrDefault(type, sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QueryFirstOrDefault(type, sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
 #endif
         }
 
@@ -778,13 +806,14 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <typeparam name="T">The type of results to return.</typeparam>
         /// <param name="command">The command used to query on this connection.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A single or null instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        protected T QueryFirstOrDefault<T>(CommandDefinition command)
+        protected T QueryFirstOrDefault<T>(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
 #if NET35
             return _dbConnection.Query<T>(command).FirstOrDefault();
@@ -804,19 +833,21 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to use for this query.</param>
         /// <param name="commandTimeout">Number of seconds before command execution timeout.</param>
         /// <param name="commandType">Is it a stored proc or a batch?</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         protected SqlMapper.GridReader QueryMultiple(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
-            return _dbConnection.QueryMultiple(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QueryMultiple(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 
         /// <summary>
         /// Execute a command that returns multiple result sets, and access each in turn.
         /// </summary>
         /// <param name="command">The command used to query on this connection.</param>
-        protected SqlMapper.GridReader QueryMultiple(CommandDefinition command)
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
+        protected SqlMapper.GridReader QueryMultiple(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
             return _dbConnection.QueryMultiple(command);
         }
@@ -833,11 +864,12 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
         protected dynamic QuerySingle(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
-            return _dbConnection.QuerySingle(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QuerySingle(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 #endif
 
@@ -849,17 +881,18 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected T QuerySingle<T>(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
 #if NET35
-            return _dbConnection.Query<T>(sql, param, _dbTransaction, false, commandTimeout, commandType).Single();
+            return _dbConnection.Query<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, false, commandTimeout, commandType).Single();
 #else
-            return _dbConnection.QuerySingle<T>(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QuerySingle<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
 #endif
         }
 
@@ -871,18 +904,19 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <exception cref="ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected object QuerySingle(Type type, string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
 #if NET35
-            return _dbConnection.Query(type, sql, param, _dbTransaction, false, commandTimeout, commandType).Single();
+            return _dbConnection.Query(type, sql, param, withoutTranTransaction ? null : _dbTransaction, false, commandTimeout, commandType).Single();
 #else
-            return _dbConnection.QuerySingle(type, sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QuerySingle(type, sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
 #endif
         }
 
@@ -891,13 +925,14 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <typeparam name="T">The type of results to return.</typeparam>
         /// <param name="command">The command used to query on this connection.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        protected T QuerySingle<T>(CommandDefinition command)
+        protected T QuerySingle<T>(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
 #if NET35
             return _dbConnection.Query<T>(command).Single();
@@ -918,11 +953,12 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <remarks>Note: the row can be accessed via "dynamic", or by casting to an IDictionary&lt;string,object&gt;</remarks>
         protected dynamic QuerySingleOrDefault(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
-            return _dbConnection.QuerySingleOrDefault(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QuerySingleOrDefault(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
         }
 #endif
 
@@ -934,18 +970,19 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected T QuerySingleOrDefault<T>(string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
 #if NET35
-            return _dbConnection.Query<T>(sql, param, _dbTransaction, false, commandTimeout, commandType)
+            return _dbConnection.Query<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, false, commandTimeout, commandType)
                 .SingleOrDefault();
 #else
-            return _dbConnection.QuerySingleOrDefault<T>(sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QuerySingleOrDefault<T>(sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
 #endif
         }
 
@@ -957,19 +994,20 @@ namespace GodSharp.Data.Dapper
         /// <param name="param">The parameters to pass, if any.</param>
         /// <param name="commandTimeout">The command timeout (in seconds).</param>
         /// <param name="commandType">The type of command to execute.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <exception cref="ArgumentNullException"><paramref name="type"/> is <c>null</c>.</exception>
         /// <returns>
         /// A sequence of data of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
         protected object QuerySingleOrDefault(Type type, string sql, object param = null, int? commandTimeout = null,
-            CommandType? commandType = null)
+            CommandType? commandType = null,bool withoutTranTransaction=false)
         {
 #if NET35
-            return _dbConnection.Query(type, sql, param, _dbTransaction, false, commandTimeout, commandType)
+            return _dbConnection.Query(type, sql, param, withoutTranTransaction ? null : _dbTransaction, false, commandTimeout, commandType)
                 .SingleOrDefault();
 #else
-            return _dbConnection.QuerySingleOrDefault(type, sql, param, _dbTransaction, commandTimeout, commandType);
+            return _dbConnection.QuerySingleOrDefault(type, sql, param, withoutTranTransaction ? null : _dbTransaction, commandTimeout, commandType);
 #endif
         }
 
@@ -978,13 +1016,14 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         /// <typeparam name="T">The type of results to return.</typeparam>
         /// <param name="command">The command used to query on this connection.</param>
+        /// <param name="withoutTranTransaction">Whether to use a transaction.</param>
         /// <returns>
         /// A single instance of the supplied type; if a basic type (int, string, etc) is queried then the data from the first column in assumed, otherwise an instance is
         /// created per row, and a direct column-name===member-name mapping is assumed (case insensitive).
         /// </returns>
-        protected T QuerySingleOrDefault<T>(CommandDefinition command)
+        protected T QuerySingleOrDefault<T>(CommandDefinition command,bool withoutTranTransaction=false)
         {
-            command = new CommandDefinition(command.CommandText, command.Parameters, _dbTransaction,
+            command = new CommandDefinition(command.CommandText, command.Parameters, withoutTranTransaction ? null : _dbTransaction,
                 command.CommandTimeout, command.CommandType, command.Flags);
 #if NET35
             return _dbConnection.Query<T>(command).SingleOrDefault();
