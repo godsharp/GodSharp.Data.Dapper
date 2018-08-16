@@ -19,7 +19,6 @@ build:
   publish_nuget: false
   include_nuget_references: true
   verbosity: minimal
-test: off
 artifacts:
 - path: '**\*.nupkg'
   name: nuget
