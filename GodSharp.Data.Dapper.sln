@@ -1,18 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{88A87CD9-82FA-4EE9-8F29-886163298E32}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F58AD8DB-BA8E-4FD4-8114-9C9B9087B5F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GodSharp.Data.Dapper", "src\GodSharp.Data.Dapper\GodSharp.Data.Dapper.csproj", "{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GodSharp.Data.Dapper", "src\GodSharp.Data.Dapper\GodSharp.Data.Dapper.csproj", "{38D326CD-B657-46BE-AC5C-D336EEA2251F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F5FE834D-22E0-4CB2-A485-85337CD7D085}"
-ProjectSection(SolutionItems) = preProject
-	appveyor.yml = appveyor.yml
-	.gitignore = .gitignore
-	README.md = README.md
-EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A5633B99-3BD3-4EC1-888D-E5D74D8104EB}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{CD2327D4-61BF-4E96-A096-88BE587EBC29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GodSharp.Data.Dapper.UnitTest", "test\GodSharp.Data.Dapper.UnitTest\GodSharp.Data.Dapper.UnitTest.csproj", "{3C8DCBF0-B79A-412C-8DDA-9AE86CE5BF93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,18 +23,23 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38D326CD-B657-46BE-AC5C-D336EEA2251F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D326CD-B657-46BE-AC5C-D336EEA2251F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38D326CD-B657-46BE-AC5C-D336EEA2251F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38D326CD-B657-46BE-AC5C-D336EEA2251F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C8DCBF0-B79A-412C-8DDA-9AE86CE5BF93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C8DCBF0-B79A-412C-8DDA-9AE86CE5BF93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C8DCBF0-B79A-412C-8DDA-9AE86CE5BF93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C8DCBF0-B79A-412C-8DDA-9AE86CE5BF93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{6ED5410E-A945-4B17-AD71-BEC9BB62CA7E} = {88A87CD9-82FA-4EE9-8F29-886163298E32}
+		{38D326CD-B657-46BE-AC5C-D336EEA2251F} = {F58AD8DB-BA8E-4FD4-8114-9C9B9087B5F6}
+		{3C8DCBF0-B79A-412C-8DDA-9AE86CE5BF93} = {CD2327D4-61BF-4E96-A096-88BE587EBC29}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FBDB1F4C-F82C-460D-9227-282EAD7EE8A0}
+		SolutionGuid = {FCB36CC9-E169-4B04-913A-F84B79545612}
 	EndGlobalSection
 EndGlobal

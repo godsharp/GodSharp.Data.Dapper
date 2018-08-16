@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading;
 using Dapper;
 #if NET35
 using System.Linq;
 #endif
-#if NFX
+#if !NETSTANDARD1_3
 using GodSharp.Data.Dapper.Extension;
-
 #endif
 
 // ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
@@ -20,7 +20,7 @@ namespace GodSharp.Data.Dapper
     /// Dapper DbContext
     /// </summary>
     /// <seealso cref="System.IDisposable" />
-    public class DbContext : IDisposable
+    public class DapperDbContext : IDisposable
     {
         #region // Fileds        
 
@@ -49,15 +49,22 @@ namespace GodSharp.Data.Dapper
         /// </summary>
         private DbConnectionFactory _factory;
 
+        /// <summary>
+        /// The transaction level
+        /// </summary>
+        private int _transactionLevel;
+
         #endregion
 
         #region // Constructor methods
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DbContext"/> class.
+        /// Initializes a new instance of the <see cref="DapperDbContext"/> class.
         /// </summary>
-        protected DbContext()
+        protected DapperDbContext()
         {
+            _transactionLevel = 0;
+
             _factory = new DbConnectionFactory();
 
             // ReSharper disable once VirtualMemberCallInConstructor
@@ -70,10 +77,10 @@ namespace GodSharp.Data.Dapper
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DbContext"/> class.
+        /// Initializes a new instance of the <see cref="DapperDbContext"/> class.
         /// </summary>
         /// <param name="connectionStringName">Name of the connection string key.</param>
-        protected DbContext(string connectionStringName)
+        protected DapperDbContext(string connectionStringName)
         {
             _factory = new DbConnectionFactory(connectionStringName);
 
@@ -98,9 +105,15 @@ namespace GodSharp.Data.Dapper
         /// <param name="il">The il.</param>
         protected void BeginTransaction(IsolationLevel? il = null)
         {
-            if (_dbTransaction == null)
+            int level = Interlocked.Increment(ref _transactionLevel);
+
+            if (level == 1 && _dbTransaction != null)
             {
-				Open();
+                throw new InvalidOperationException("transaction exist.");
+            }
+            else if (level == 1 && _dbTransaction == null)
+            {
+                Open();
 
                 _dbTransaction =
                     il == null ? _dbConnection.BeginTransaction() : _dbConnection.BeginTransaction(il.Value);
@@ -114,20 +127,32 @@ namespace GodSharp.Data.Dapper
         /// <returns></returns>
         protected int Commit()
         {
-            if (_dbTransaction != null)
+            int number = 0;
+
+            int level = Interlocked.Decrement(ref _transactionLevel);
+
+            if (level == 0)
             {
-                if (_hasError)
+                if (_dbTransaction != null)
                 {
-                    _dbTransaction.Rollback();
-                }
-                else
-                {
-                    _dbTransaction.Commit();
+                    if (_hasError)
+                    {
+                        _dbTransaction.Rollback();
+                        _affectedRowNumber = -1;
+                    }
+                    else
+                    {
+                        _dbTransaction.Commit();
+                        number = _affectedRowNumber;
+                    }
                 }
             }
+            else if (level < 0)
+            {
+                Reset();
 
-            int number = _affectedRowNumber;
-            Reset();
+                throw new InvalidOperationException("commit number more than begin transaction number.");
+            }
 
             return number;
         }
@@ -173,6 +198,7 @@ namespace GodSharp.Data.Dapper
             _hasError = false;
             _dbTransaction = null;
             _affectedRowNumber = 0;
+            _transactionLevel = 0;
         }
 
         #endregion
@@ -625,7 +651,7 @@ namespace GodSharp.Data.Dapper
         }
 #endif
 
-#if WF
+#if !NETSTANDARD1_3
         /// <summary>
         /// This returns a <see cref="DataTable"/>.
         /// </summary>
@@ -1062,7 +1088,7 @@ namespace GodSharp.Data.Dapper
         /// <summary>
         /// Dispose
         /// </summary>
-        ~DbContext()
+        ~DapperDbContext()
         {
             Dispose(false);
         }

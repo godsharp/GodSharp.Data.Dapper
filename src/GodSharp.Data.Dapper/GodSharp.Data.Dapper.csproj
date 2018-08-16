@@ -1,30 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  
   <PropertyGroup>
-    <AssemblyVersion>1.0.0.6</AssemblyVersion>
-    <AssemblyFileVersion>1.0.0.6</AssemblyFileVersion>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <NeutralLanguage>en-US</NeutralLanguage>
     <Title>GodSharp.Data.Dapper</Title>
-    <PackageId>GodSharp.Data.Dapper</PackageId>
-    <PackageTags>Dapper,GodSharp.Data.Dapper,GodSharp</PackageTags>
-    <PackageReleaseNotes>Add 'withoutTranTransaction' signature decide whether to use a transaction.</PackageReleaseNotes>
-    <Company>GodSharp</Company>
+    <AssemblyVersion>1.0.0.7</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.7</AssemblyFileVersion>
+    <Version>1.0.0</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>seayxu</Authors>
     <Description>DbContext for Dapper.</Description>
+    <Copyright>Copyright © GodSharp 2017</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageId>GodSharp.Data.Dapper</PackageId>
+    <PackageTags>Dapper,GodSharp.Data.Dapper,GodSharp</PackageTags>
+    <PackageReleaseNotes>Supported loop transaction.</PackageReleaseNotes>
+    <Company>GodSharp</Company>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/godsharp/GodSharp.Data.Dapper.git</RepositoryUrl>
     <PackageProjectUrl>https://github.com/godsharp/GodSharp.Data.Dapper</PackageProjectUrl>
-    <Copyright>Copyright © GodSharp 2017</Copyright>
     <PackageIconUrl>https://avatars3.githubusercontent.com/u/26563296</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/godsharp/GodSharp.Data.Dapper/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>1.0.0-preview6</Version>
-    <EnableDefaultItems>true</EnableDefaultItems>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFrameworks Condition="'$(LibraryFrameworks)'==''">netstandard2.0;netstandard1.3;net451;net45;net40;net35;</TargetFrameworks>
-    <TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworks>net35;net40;net45;net451;netstandard1.3;netstandard2.0;</TargetFrameworks>
+    <!--<TargetFrameworks Condition="'$(LibraryFrameworks)'==''">net35;net40;net45;net451;netstandard1.3;netstandard2.0;</TargetFrameworks> -->
+    <!--<TargetFrameworks Condition="'$(LibraryFrameworks)'!=''">$(LibraryFrameworks)</TargetFrameworks> -->
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net35'">
     <DefineConstants>NFX;NET35;WF;$(AdditionalConstants)</DefineConstants>
@@ -35,7 +32,7 @@
   <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
     <DefineConstants>NFX;NET45;WF;$(AdditionalConstants)</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)'=='net45'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='net451'">
     <DefineConstants>NFX;NET451;WF;$(AdditionalConstants)</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='netstandard1.3'">
@@ -81,7 +78,7 @@
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Dapper" Version="1.50.4-alpha1-00070" />
+    <PackageReference Include="Dapper" Version="1.50.4" />
     <PackageReference Include="GodSharp.Data.Common.DbProvider" Version="1.0.0-preview1" />
   </ItemGroup>
 </Project>

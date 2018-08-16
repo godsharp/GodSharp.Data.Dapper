@@ -1,4 +1,4 @@
-﻿#if WF
+﻿#if !NETSTANDARD1_3
 using Dapper;
 using System.Data;
 

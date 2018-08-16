@@ -14,7 +14,7 @@ DbContext for Dapper.
 
   See [here](https://www.nuget.org/packages/GodSharp.Data.Dapper/).
 
-2. Inherited class `DbContext`.
+2. Inherited class `DapperDbContext`.
 
   Use connectionString name in `App.Config` or `Web.config` as constructor parameters.
 
